@@ -1,4 +1,3 @@
-// src/admin/admin.model.ts
 import { Table, Column, Model, DataType } from "sequelize-typescript";
 
 @Table
@@ -21,4 +20,9 @@ export class Admin extends Model<Admin> {
     allowNull: false,
   })
   password: string;
+
+  @Column({
+    type: DataType.STRING,
+  })
+  token: string;
 }

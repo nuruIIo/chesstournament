@@ -1,26 +1,50 @@
-import { Injectable } from '@nestjs/common';
-import { CreateTournamentDto } from './dto/create-tournament.dto';
-import { UpdateTournamentDto } from './dto/update-tournament.dto';
+// src/tournament/tournament.service.ts
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectModel } from "@nestjs/sequelize";
+import { Tournament } from "./entities/tournament.entity";
+import { CreateTournamentDto } from "./dto/create-tournament.dto";
+import { UpdateTournamentDto } from "./dto/update-tournament.dto";
 
 @Injectable()
 export class TournamentService {
-  create(createTournamentDto: CreateTournamentDto) {
-    return 'This action adds a new tournament';
+  constructor(
+    @InjectModel(Tournament) private readonly tournamentRepo: typeof Tournament
+  ) {}
+
+  async create(createTournamentDto: CreateTournamentDto) {
+    return this.tournamentRepo.create(createTournamentDto);
   }
 
-  findAll() {
-    return `This action returns all tournament`;
+  async findAll() {
+    return this.tournamentRepo.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} tournament`;
+  async findOne(id: number) {
+    const tournament = await this.tournamentRepo.findByPk(id);
+    if (!tournament) {
+      throw new NotFoundException("Tournament not found");
+    }
+    return tournament;
   }
 
-  update(id: number, updateTournamentDto: UpdateTournamentDto) {
-    return `This action updates a #${id} tournament`;
+  async update(id: number, updateTournamentDto: UpdateTournamentDto) {
+    const [rowsUpdated] = await this.tournamentRepo.update(
+      updateTournamentDto,
+      {
+        where: { id },
+      }
+    );
+    if (!rowsUpdated) {
+      throw new NotFoundException("Tournament not found");
+    }
+    return { rowsUpdated };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tournament`;
+  async remove(id: number) {
+    const rowsDeleted = await this.tournamentRepo.destroy({ where: { id } });
+    if (!rowsDeleted) {
+      throw new NotFoundException("Tournament not found");
+    }
+    return { rowsDeleted };
   }
 }

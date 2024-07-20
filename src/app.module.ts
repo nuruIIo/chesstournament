@@ -7,6 +7,7 @@ import { TournamentModule } from "./tournament/tournament.module";
 import { MatchModule } from "./match/match.module";
 import { Admin } from "./admin/entities/admin.entity";
 import { User } from "./user/entities/user.entity";
+import { Tournament } from "./tournament/entities/tournament.entity";
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { User } from "./user/entities/user.entity";
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      models: [Admin, User],
+      models: [Admin, User, Tournament],
       autoLoadModels: true,
       sync: { alter: true },
       logging: false,
